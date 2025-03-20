@@ -27,7 +27,7 @@ def predict_spam(request: TextRequest, db: Session = Depends(get_db)):
     prediction = model_spam.predict(text_vectorized)
     prediction_proba = model_spam.predict_proba(text_vectorized)
     result = "Spam" if round(prediction[0]) == 1 else "Not Spam"
-    accuracy = float(max(prediction_proba[0]))  # Convert np.float64 to native Python float
+    accuracy = float(max(prediction_proba[0]))
     
     # Save the result to the database
     spam_result = SpamResult(
