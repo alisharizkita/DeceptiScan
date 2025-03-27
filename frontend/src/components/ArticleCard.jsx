@@ -6,9 +6,45 @@ import InputArticle from "@/components/InputArticle";
 
 const ArticleCard = ({ article, isLoggedIn }) => {
   const [isEdit, setIsEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDeleteArticle = () => {
-    console.log("article deleted");
+  const handleDeleteArticle = async () => {
+    const articleId = article.articleID;
+    if (!articleId) {
+      alert("Cannot delete article: Missing article ID");
+      return;
+    }
+  
+    const confirmed = window.confirm("Are you sure you want to delete this article?");
+    if (!confirmed) return;
+  
+    setIsLoading(true);
+  
+    try {
+      const response = await fetch("/api/article/delete-article", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ articleId }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete article");
+      }
+  
+      alert("Article deleted successfully");
+  
+      // Refresh the article list
+      location.reload();
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      alert(error.message || "Failed to delete article");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEditArticle = () => {
@@ -46,10 +82,15 @@ const ArticleCard = ({ article, isLoggedIn }) => {
             <FaPencil className="text-green-600 text-[1.3vw]" />
           </button>
           <button
-            onClick={handleDeleteArticle}
+            onClick={handleDeleteArticle} 
             className="hover:cursor-pointer"
+            disabled={isLoading}
           >
-            <FaTrashAlt className="text-red-600 text-[1.3vw]" />
+            {isLoading ? (
+              <span>...</span> // Simple loading indicator
+            ) : (
+              <FaTrashAlt className="text-red-600 text-[1.3vw]" />
+            )}
           </button>
         </div>
       )}

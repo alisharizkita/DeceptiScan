@@ -38,6 +38,7 @@ const Articles = () => {
           title: article.title,
           text: article.summary,
           link: article.link || "#",
+          articleID: article.articleID,
         }));
 
         setArticles(formattedArticles);
@@ -124,6 +125,8 @@ const Articles = () => {
       ]);
 
       setIsClick(false);
+      location.reload(); // Refresh the page to show the new article
+      
     } catch (err) {
       console.error("Error adding article:", err);
       alert(err.message || "Failed to add article. Please try again.");
