@@ -21,13 +21,6 @@ export async function POST(req) {
     const backendFormData = new FormData();
     backendFormData.append('image', image);
 
-    // Log request details for debugging
-    console.log('Sending image upload request to:', {
-      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/upload-image`,
-      method: 'POST',
-      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-    });
-
     // Send to backend
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/upload-image`, {
       method: 'POST',
