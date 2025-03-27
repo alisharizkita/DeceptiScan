@@ -113,7 +113,7 @@ const InputArticle = ({ onClose, onSubmit }) => {
     }
 
     const formattedLink =
-      link && link.trim() !== "" && link.startsWith("http")
+      link && link.trim() !== "" && link.startsWith("https:")
         ? link
         : link.trim() !== ""
         ? `https://${link}`
