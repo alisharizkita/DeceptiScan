@@ -121,3 +121,68 @@ async def delete_article(article_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"message": f"Failed to delete article: {str(e)}", "error_type": type(e).__name__}
         )
+        
+@article_router.put("/{article_id}", response_model=ArticleResponse)
+async def update_article(
+    article_id: int,
+    article_update: ArticleCreate = Body(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing article in the database
+    """
+    try:
+        # Check if article exists
+        db_article = db.query(Article).filter(Article.articleID == article_id).first()
+        if not db_article:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Article with ID {article_id} not found"
+            )
+        
+        # Store old image link in case it changes
+        old_image = db_article.imageLink if db_article.imageLink != article_update.imageLink else None
+        
+        # Update article fields
+        db_article.adminID = article_update.adminID
+        db_article.title = article_update.title
+        db_article.summary = article_update.summary
+        db_article.link = article_update.link
+        db_article.imageLink = article_update.imageLink
+        
+        # Save changes to database
+        try:
+            db.commit()
+            db.refresh(db_article)
+        except Exception as db_error:
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Database error while updating article: {str(db_error)}"
+            )
+        
+        # If image was changed, delete the old one from storage
+        if old_image:
+            try:
+                await delete_image(old_image)
+            except Exception as img_error:
+                # Log error but don't fail the request since the article was updated successfully
+                print(f"Warning: Failed to delete old image from storage: {str(img_error)}")
+        
+        return db_article
+        
+    except HTTPException as http_ex:
+        # Re-raise HTTP exceptions
+        raise http_ex
+    except Exception as e:
+        db.rollback()
+        # Log the full error for debugging
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error updating article {article_id}: {str(e)}")
+        print(error_trace)
+        
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update article: {str(e)}"
+        )
