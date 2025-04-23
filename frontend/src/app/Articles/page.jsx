@@ -139,8 +139,67 @@ const Articles = () => {
     setIsEdit(true);
   };
 
-  const submitEditArticle = () => {
-    console.log("Article edited successfully");
+  const submitEditArticle = async (updatedArticle) => {
+    try {
+      // Get admin ID from token
+      const token = await getCookie("TOKEN");
+      if (!token) {
+        throw new Error("User not authenticated");
+      }
+  
+      // Get admin ID from cookie
+      const adminIdStr = await getCookie("ADMIN_ID");
+      const adminID = adminIdStr ? parseInt(adminIdStr, 10) : 1;
+  
+      // Prepare article data for backend - match the expected field names
+      const articleData = {
+        adminID: adminID,
+        title: updatedArticle.title,
+        summary: updatedArticle.text,
+        link: updatedArticle.link || "",
+        imageLink: updatedArticle.photo,
+        articleID: updatedArticle.articleID, // Include article ID in the body
+      };
+  
+      console.log("Updating article with data:", articleData);
+  
+      // Send PUT request to update the article
+      const response = await fetch("/api/article/edit-article", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articleData),
+      });
+  
+      if (!response.ok) {
+        // Safely handle the error response - check if it's JSON first
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          throw new Error(
+            `Failed to update article: ${response.status} - ${JSON.stringify(errorData)}`
+          );
+        } else {
+          // For non-JSON responses (like HTML error pages)
+          const errorText = await response.text();
+          throw new Error(
+            `Failed to update article: ${response.status} - Non-JSON response received`
+          );
+        }
+      }
+  
+      // Close the edit modal
+      setIsEdit(false);
+      
+      // Refresh the page to show the updated article
+      alert("Article updated successfully");
+      location.reload();
+    } catch (err) {
+      console.error("Error updating article:", err);
+      alert(err.message || "Failed to update article. Please try again.");
+    }
   };
 
   return (

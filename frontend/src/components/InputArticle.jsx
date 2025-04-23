@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Image from "next/image";
 
-const InputArticle = ({ inputOptions, onClose, onSubmit }) => {
+const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [preview, setPreview] = useState("");
@@ -13,7 +13,19 @@ const InputArticle = ({ inputOptions, onClose, onSubmit }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [articleId, setArticleId] = useState(null);
   const fileInputRef = useRef(null);
+
+   // Load article data when in edit mode
+   useEffect(() => {
+    if (inputOptions === "Edit" && article) {
+      setTitle(article.title || "");
+      setLink(article.link || "");
+      setPreview(article.text || "");
+      setImagePreview(article.photo || "/uploadImage.png");
+      setArticleId(article.articleID);
+    }
+  }, [inputOptions, article]);
 
   const uploadImage = async (file) => {
     if (!file) return;
@@ -119,16 +131,20 @@ const InputArticle = ({ inputOptions, onClose, onSubmit }) => {
         ? `https://${link}`
         : ""; // If the link is empty, use an empty string
 
-    const newArticle = {
+    const articleData = {
       photo: imagePreview !== "/uploadImage.png" ? imagePreview : "", // Don't use the default image
       title,
       text: preview,
       link: formattedLink,
     };
-    // console.log(newArticle);
-    if (inputOptions === "Add") {
-      onSubmit(newArticle);
+    
+    // When in edit mode, also include the article ID
+    if (inputOptions === "Edit" && articleId) {
+      articleData.articleID = articleId;
     }
+    
+    // Pass the data to the parent component's handler
+    onSubmit(articleData);
   };
 
   return (
@@ -136,12 +152,12 @@ const InputArticle = ({ inputOptions, onClose, onSubmit }) => {
       <div className="w-[62.187vw] h-[40.99vw] bg-white px-[3vw] py-[1.5vw] flex flex-col items-start justify-evenly text-black relative">
         <div>
           <h1 className="text-[#146D74] text-[2.083vw] font-bold">
-            Write Your Article
+            {inputOptions === "Edit" ? "Edit Your Article" : "Write Your Article"}
           </h1>
           <p className="text-[1.25vw] mt-[0.5vw]">{`${inputOptions} the article here`}</p>
           <div className="w-[56.458vw] h-[0.05vw] bg-black mt-[0.85vw]"></div>
         </div>
-        <form onSubmit={inputOptions === "Add" ? handleSubmit : onSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="mt-[2vw]">
             <label className="text-[1.25vw]">Article's Title*</label>
             <input
