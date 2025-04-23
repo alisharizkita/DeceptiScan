@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Image from "next/image";
 
-const InputArticle = ({ onClose, onSubmit }) => {
+const InputArticle = ({ inputOptions, onClose, onSubmit }) => {
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [preview, setPreview] = useState("");
@@ -125,8 +125,10 @@ const InputArticle = ({ onClose, onSubmit }) => {
       text: preview,
       link: formattedLink,
     };
-    console.log(newArticle);
-    onSubmit(newArticle);
+    // console.log(newArticle);
+    if (inputOptions === "Add") {
+      onSubmit(newArticle);
+    }
   };
 
   return (
@@ -136,10 +138,10 @@ const InputArticle = ({ onClose, onSubmit }) => {
           <h1 className="text-[#146D74] text-[2.083vw] font-bold">
             Write Your Article
           </h1>
-          <p className="text-[1.25vw] mt-[0.5vw]">Add the article here</p>
+          <p className="text-[1.25vw] mt-[0.5vw]">{`${inputOptions} the article here`}</p>
           <div className="w-[56.458vw] h-[0.05vw] bg-black mt-[0.85vw]"></div>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={inputOptions === "Add" ? handleSubmit : onSubmit}>
           <div className="mt-[2vw]">
             <label className="text-[1.25vw]">Article's Title*</label>
             <input

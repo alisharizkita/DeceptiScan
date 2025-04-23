@@ -4,8 +4,8 @@ import { FaTrashAlt } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import InputArticle from "@/components/InputArticle";
 
-const ArticleCard = ({ article, isLoggedIn }) => {
-  const [isEdit, setIsEdit] = useState(false);
+const ArticleCard = ({ article, isLoggedIn, onEdit }) => {
+  // const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDeleteArticle = async () => {
@@ -14,12 +14,14 @@ const ArticleCard = ({ article, isLoggedIn }) => {
       alert("Cannot delete article: Missing article ID");
       return;
     }
-  
-    const confirmed = window.confirm("Are you sure you want to delete this article?");
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this article?"
+    );
     if (!confirmed) return;
-  
+
     setIsLoading(true);
-  
+
     try {
       const response = await fetch("/api/article/delete-article", {
         method: "DELETE",
@@ -28,15 +30,15 @@ const ArticleCard = ({ article, isLoggedIn }) => {
         },
         body: JSON.stringify({ articleId }),
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Failed to delete article");
       }
-  
+
       alert("Article deleted successfully");
-  
+
       // Refresh the article list
       location.reload();
     } catch (error) {
@@ -45,10 +47,6 @@ const ArticleCard = ({ article, isLoggedIn }) => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleEditArticle = () => {
-    console.log("article edited");
   };
 
   return (
@@ -76,13 +74,13 @@ const ArticleCard = ({ article, isLoggedIn }) => {
       {isLoggedIn && (
         <div className="absolute bottom-[1vw] right-[1vw] flex items-center gap-x-[0.8vw]">
           <button
-            onClick={() => setIsEdit(true)}
+            onClick={() => onEdit(article)}
             className="hover:cursor-pointer"
           >
             <FaPencil className="text-green-600 text-[1.3vw]" />
           </button>
           <button
-            onClick={handleDeleteArticle} 
+            onClick={handleDeleteArticle}
             className="hover:cursor-pointer"
             disabled={isLoading}
           >
@@ -92,14 +90,6 @@ const ArticleCard = ({ article, isLoggedIn }) => {
               <FaTrashAlt className="text-red-600 text-[1.3vw]" />
             )}
           </button>
-        </div>
-      )}
-      {isEdit && (
-        <div className="fixed inset-0 flex justify-center items-center bg-[rgba(0,0,0,0.85)] z-50">
-          <InputArticle
-            onClose={() => setIsEdit(false)}
-            onSubmit={handleEditArticle}
-          />
         </div>
       )}
     </div>

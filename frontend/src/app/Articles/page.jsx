@@ -13,6 +13,8 @@ const Articles = () => {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEdit, setIsEdit] = useState(null);
+  const [editingArticle, setEditingArticle] = useState(null);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -126,11 +128,19 @@ const Articles = () => {
 
       setIsClick(false);
       location.reload(); // Refresh the page to show the new article
-      
     } catch (err) {
       console.error("Error adding article:", err);
       alert(err.message || "Failed to add article. Please try again.");
     }
+  };
+
+  const handleEditArticle = (article) => {
+    setEditingArticle(article);
+    setIsEdit(true);
+  };
+
+  const submitEditArticle = () => {
+    console.log("Article edited successfully");
   };
 
   return (
@@ -151,6 +161,7 @@ const Articles = () => {
               article={article}
               key={index}
               isLoggedIn={isLoggedIn}
+              onEdit={handleEditArticle}
             />
           ))
         )}
@@ -158,7 +169,7 @@ const Articles = () => {
         {isLoggedIn && (
           <button
             onClick={() => setIsClick(true)}
-            className="w-[4.583vw] h-[4.583vw] rounded-full font-bold bg-[#1A929A] hover:bg-[#166E74] active:bg-[#124D53] transition ease-in duration-100 flex items-center justify-center fixed bottom-8 right-8 hover:rotate-[-180deg] hover:transition hover:ease-in hover:duration-300"
+            className="w-[4.583vw] h-[4.583vw] rounded-full font-bold bg-[#1A929A] hover:bg-[#166E74] active:bg-[#124D53] transition flex items-center justify-center fixed bottom-8 right-8 hover:rotate-[-180deg] hover:transition hover:ease-in hover:duration-300 hover:cursor-pointer"
           >
             <FaPlus className="text-[3vw]" />
           </button>
@@ -168,7 +179,17 @@ const Articles = () => {
           <InputArticle
             onClose={() => setIsClick(false)}
             onSubmit={handleAddArticle}
+            inputOptions={"Add"}
           />
+        )}
+
+        {isEdit && editingArticle && (
+          <InputArticle
+            onClose={() => setIsEdit(false)}
+            onSubmit={submitEditArticle}
+            inputOptions={"Edit"}
+            article={editingArticle}
+          ></InputArticle>
         )}
       </div>
     </div>
