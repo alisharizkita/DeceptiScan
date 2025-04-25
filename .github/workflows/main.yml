@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: ryanlukito/DeceptiScan-Duplicate
           token: ${{ secrets.CI_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           sparse-checkout: |
             backend/
@@ -73,7 +73,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Create .env.development file from secret
-        run: echo "${{ secrets.ENV_DEVELOPMENT }}" > backend/.env.development
+        run: echo "${{ secrets.ENV }}" > backend/.env.development
 
       - name: Build and Push Backend Docker Image
         uses: docker/build-push-action@v5
