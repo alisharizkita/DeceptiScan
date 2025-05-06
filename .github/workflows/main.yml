@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          repository: ryanlukito/DeceptiScan-Duplicate
+          repository: alisharizkita/DeceptiScan
           token: ${{ secrets.CI_TOKEN }}
           submodules: true
           sparse-checkout: |
