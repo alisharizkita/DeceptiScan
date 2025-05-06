@@ -16,8 +16,8 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
   const [articleId, setArticleId] = useState(null);
   const fileInputRef = useRef(null);
 
-   // Load article data when in edit mode
-   useEffect(() => {
+  // Load article data when in edit mode
+  useEffect(() => {
     if (inputOptions === "Edit" && article) {
       setTitle(article.title || "");
       setLink(article.link || "");
@@ -137,12 +137,12 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
       text: preview,
       link: formattedLink,
     };
-    
+
     // When in edit mode, also include the article ID
     if (inputOptions === "Edit" && articleId) {
       articleData.articleID = articleId;
     }
-    
+
     // Pass the data to the parent component's handler
     onSubmit(articleData);
   };
@@ -152,7 +152,9 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
       <div className="w-[62.187vw] h-[40.99vw] bg-white px-[3vw] py-[1.5vw] flex flex-col items-start justify-evenly text-black relative">
         <div>
           <h1 className="text-[#146D74] text-[2.083vw] font-bold">
-            {inputOptions === "Edit" ? "Edit Your Article" : "Write Your Article"}
+            {inputOptions === "Edit"
+              ? "Edit Your Article"
+              : "Write Your Article"}
           </h1>
           <p className="text-[1.25vw] mt-[0.5vw]">{`${inputOptions} the article here`}</p>
           <div className="w-[56.458vw] h-[0.05vw] bg-black mt-[0.85vw]"></div>
@@ -245,7 +247,11 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
           <div className="flex mt-[2vw] ml-[9vw]">
             <button
               type="submit"
-              className="w-[7.865vw] h-[2.292vw] text-[1.25vw] bg-[#146D74] rounded-[0.26vw] text-white hover:bg-[#106167] active:bg-[#0F565B] transition ease-out-300"
+              className={`w-[7.865vw] h-[2.292vw] text-[1.25vw] rounded-[0.26vw] text-white transition ease-out-300 ${
+                isUploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#146D74] hover:bg-[#106167] active:bg-[#0F565B]"
+              }`}
               disabled={isUploading}
             >
               {isUploading ? "Uploading..." : "Save"}
