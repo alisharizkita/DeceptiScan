@@ -58,18 +58,18 @@ const ArticleCard = ({ article, isLoggedIn, onEdit }) => {
         alt="photo"
         className="w-[18.438vw] h-[9.219vw] rounded-[1.042vw]"
       />
-      <div className="mt-[0.3vw]">
+      <div className="mt-[0.3vw] flex flex-col items-center">
         <h1 className="text-[1.25vw]">{article.title}</h1>
-        <p className="text-[0.625vw] text-justify">
+        <p className="text-[0.625vw] line-clamp-1 text-justify">
           {article.text}
-          <a
-            href={article.link}
-            target="_blank"
-            className="text-blue-600 ml-[0.3vw]"
-          >
-            Read More
-          </a>
         </p>
+        <a
+          href={article.link}
+          target="_blank"
+          className="text-blue-600 ml-[0.3vw] text-[0.625vw]"
+        >
+          Read More
+        </a>
       </div>
       {isLoggedIn && (
         <div className="absolute bottom-[1vw] right-[1vw] flex items-center gap-x-[0.8vw]">
