@@ -148,61 +148,76 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-[rgba(0,0,0,0.85)] z-10">
-      <div className="w-[62.187vw] h-[40.99vw] bg-white px-[3vw] py-[1.5vw] flex flex-col items-start justify-evenly text-black relative">
-        <div>
-          <h1 className="text-[#146D74] text-[2.083vw] font-bold">
-            {inputOptions === "Edit"
-              ? "Edit Your Article"
-              : "Write Your Article"}
-          </h1>
-          <p className="text-[1.25vw] mt-[0.5vw]">{`${inputOptions} the article here`}</p>
-          <div className="w-[56.458vw] h-[0.05vw] bg-black mt-[0.85vw]"></div>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="mt-[2vw]">
-            <label className="text-[1.25vw]">Article's Title*</label>
+    <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/85 px-4 py-6 overflow-auto">
+      <div className="relative w-full max-w-5xl bg-white p-6 sm:p-8 rounded-lg">
+        <button onClick={onClose} className="absolute right-4 top-4">
+          <IoMdCloseCircleOutline className="text-3xl text-red-600 hover:text-red-700" />
+        </button>
+
+        <h1 className="text-xl sm:text-2xl font-bold text-[#146D74]">
+          {inputOptions === "Edit" ? "Edit Your Article" : "Write Your Article"}
+        </h1>
+        <p className="text-sm sm:text-base mb-2 text-black">{`${inputOptions} the article here`}</p>
+        <hr className="border-black mb-4" />
+
+        <form onSubmit={handleSubmit} className="space-y-6 text-black">
+          {/* Title */}
+          <div>
+            <label className="block text-sm sm:text-base font-medium mb-1">
+              Article's Title*
+            </label>
             <input
               type="text"
-              className="text-[1vw] w-[43.49vw] h-[2.448vw] px-[1vw] py-[0.2vw] rounded-[0.52vw] border-1 border-black ml-[2vw]"
               required
               placeholder="Title"
+              className="w-full rounded-md border border-black px-4 py-2 text-sm sm:text-base"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-          <div className="mt-[2vw]">
-            <label className="text-[1.25vw]">Source Link*</label>
+
+          {/* Link */}
+          <div>
+            <label className="block text-sm sm:text-base font-medium mb-1">
+              Source Link*
+            </label>
             <input
               type="text"
-              className="text-[1vw] w-[43.49vw] h-[2.448vw] px-[1vw] py-[0.2vw] rounded-[0.52vw] border-1 border-black ml-[2.3vw]"
               required
-              placeholder="https://google.com"
+              placeholder="https://example.com"
+              className="w-full rounded-md border border-black px-4 py-2 text-sm sm:text-base"
               value={link}
               onChange={(e) => setLink(e.target.value)}
             />
           </div>
-          <div className="mt-[2vw] flex">
-            <label className="text-[1.25vw]">Preview*</label>
+
+          {/* Preview */}
+          <div>
+            <label className="block text-sm sm:text-base font-medium mb-1">
+              Preview*
+            </label>
             <textarea
-              type="text"
-              className="text-[1vw] w-[43.49vw] h-[8vw] px-[1vw] py-[0.2vw] rounded-[0.52vw] border-1 border-black ml-[4.4vw]"
               required
               placeholder="Description"
+              rows={4}
+              className="w-full rounded-md border border-black px-4 py-2 text-sm sm:text-base"
               value={preview}
               onChange={(e) => setPreview(e.target.value)}
             />
           </div>
-          <div className="mt-[2vw] flex">
-            <label className="text-[1.25vw]">Picture*</label>
-            <div className="flex items-center justify-between ml-[3.8vw]">
-              <div className="relative w-[7.708vw] h-[6.927vw]">
+
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm sm:text-base font-medium mb-1">
+              Picture*
+            </label>
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <div className="relative w-[120px] h-[110px] sm:w-[148px] sm:h-[133px]">
                 <Image
                   src={imagePreview}
-                  width={148}
-                  height={133}
-                  alt="article preview"
-                  className="w-[7.708vw] h-[6.927vw] object-cover"
+                  alt="Preview"
+                  fill
+                  className="object-cover rounded border"
                   priority
                 />
               </div>
@@ -212,62 +227,65 @@ const InputArticle = ({ inputOptions, onClose, onSubmit, article }) => {
                 className="hidden"
                 id="image-upload"
                 onChange={handleImageUpload}
-                disabled={isUploading}
                 ref={fileInputRef}
+                disabled={isUploading}
               />
               <label
                 htmlFor="image-upload"
-                className={`w-[35vw] h-[6.927vw] px-[1vw] py-[0.2vw] rounded-[0.52vw] border-1 border-black ml-[1.8vw] flex items-center justify-center hover:cursor-pointer ${
-                  isDragging ? "bg-gray-100 border-dashed" : ""
-                } ${isUploading ? "opacity-50" : ""}`}
-                onDragEnter={handleDragEnter}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
+                onDragEnter={(e) => handleDragEvents(e, true)}
+                onDragOver={(e) => handleDragEvents(e, true)}
+                onDragLeave={(e) => handleDragEvents(e, false)}
                 onDrop={handleDrop}
+                className={`flex-1 min-h-[110px] border border-black rounded-md px-4 py-4 text-center text-sm sm:text-base cursor-pointer transition ${
+                  isDragging ? "bg-gray-100 border-dashed" : ""
+                } ${
+                  isUploading
+                    ? "opacity-50 pointer-events-none"
+                    : "hover:bg-gray-50"
+                }`}
               >
                 {isUploading ? (
                   "Uploading image..."
                 ) : uploadError ? (
                   <span className="text-red-500">{uploadError}</span>
                 ) : (
-                  <div className="text-center">
-                    <span className="text-[#146D74] mr-[0.4vw] font-medium">
+                  <>
+                    <span className="text-[#146D74] font-medium">
                       Click to upload
-                    </span>
-                    <span className="mr-[0.4vw]">or drag and drop</span>
+                    </span>{" "}
+                    or drag and drop
                     <br />
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs text-gray-500 block mt-1">
                       PNG, JPG, or JPEG
                     </span>
-                  </div>
+                  </>
                 )}
               </label>
             </div>
           </div>
-          <div className="flex mt-[2vw] ml-[9vw]">
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <button
               type="submit"
-              className={`w-[7.865vw] h-[2.292vw] text-[1.25vw] rounded-[0.26vw] text-white transition ease-out-300 ${
+              disabled={isUploading}
+              className={`w-full sm:w-auto px-6 py-2 text-white rounded-md text-sm sm:text-base transition ${
                 isUploading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#146D74] hover:bg-[#106167] active:bg-[#0F565B]"
               }`}
-              disabled={isUploading}
             >
               {isUploading ? "Uploading..." : "Save"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="w-[7.865vw] h-[2.292vw] text-[1.25vw] border-1 border-black rounded-[0.26vw] ml-[1vw] bg-white hover:bg-gray-100"
+              className="w-full sm:w-auto px-6 py-2 text-sm sm:text-base border border-black rounded-md bg-white hover:bg-gray-100"
             >
               Cancel
             </button>
           </div>
         </form>
-        <button onClick={onClose} className="absolute right-[1vw] top-[1vw]">
-          <IoMdCloseCircleOutline className="text-[3vw] text-red-600 hover:text-red-700 active:text-red-800" />
-        </button>
       </div>
     </div>
   );

@@ -50,34 +50,40 @@ const ArticleCard = ({ article, isLoggedIn, onEdit }) => {
   };
 
   return (
-    <div className="w-[20.365vw] h-[17.552vw] bg-[#DEF4F6] drop-shadow-md rounded-[1.042vw] text-black p-[0.7vw] flex flex-col items-center relative">
-      <Image
-        src={article.photo}
-        width={10000}
-        height={10000}
-        alt="photo"
-        className="w-[18.438vw] h-[9.219vw] rounded-[1.042vw]"
-      />
-      <div className="mt-[0.3vw] flex flex-col items-center">
-        <h1 className="text-[1.25vw]">{article.title}</h1>
-        <p className="text-[0.625vw] line-clamp-1 text-justify">
+    <div className="w-full sm:w-[46%] md:w-[30%] lg:w-[20.365vw] bg-[#DEF4F6] shadow-md rounded-xl text-black p-4 flex flex-col items-center relative">
+      <div className="w-full h-40 sm:h-44 md:h-[9.219vw] rounded-xl overflow-hidden">
+        <Image
+          src={article.photo}
+          width={1000}
+          height={1000}
+          alt="photo"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="mt-2 flex flex-col items-center text-center px-1">
+        <h1 className="text-base sm:text-lg md:text-[1.25vw] font-semibold line-clamp-2">
+          {article.title}
+        </h1>
+        <p className="text-sm sm:text-xs md:text-[0.625vw] line-clamp-2 text-justify">
           {article.text}
         </p>
         <a
           href={article.link}
           target="_blank"
-          className="text-blue-600 ml-[0.3vw] text-[0.625vw]"
+          className="text-blue-600 mt-1 text-sm sm:text-xs md:text-[0.625vw]"
         >
           Read More
         </a>
       </div>
+
       {isLoggedIn && (
-        <div className="absolute bottom-[1vw] right-[1vw] flex items-center gap-x-[0.8vw]">
+        <div className="absolute bottom-3 right-3 flex gap-3 sm:gap-2">
           <button
             onClick={() => onEdit(article)}
             className="hover:cursor-pointer"
           >
-            <FaPencil className="text-green-600 text-[1.3vw]" />
+            <FaPencil className="text-green-600 text-lg sm:text-base md:text-[1.3vw]" />
           </button>
           <button
             onClick={handleDeleteArticle}
@@ -85,9 +91,9 @@ const ArticleCard = ({ article, isLoggedIn, onEdit }) => {
             disabled={isLoading}
           >
             {isLoading ? (
-              <span>...</span> // Simple loading indicator
+              <span className="text-xs">...</span>
             ) : (
-              <FaTrashAlt className="text-red-600 text-[1.3vw]" />
+              <FaTrashAlt className="text-red-600 text-lg sm:text-base md:text-[1.3vw]" />
             )}
           </button>
         </div>
