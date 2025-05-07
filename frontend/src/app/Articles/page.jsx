@@ -146,11 +146,11 @@ const Articles = () => {
       if (!token) {
         throw new Error("User not authenticated");
       }
-  
+
       // Get admin ID from cookie
       const adminIdStr = await getCookie("ADMIN_ID");
       const adminID = adminIdStr ? parseInt(adminIdStr, 10) : 1;
-  
+
       // Prepare article data for backend - match the expected field names
       const articleData = {
         adminID: adminID,
@@ -160,9 +160,9 @@ const Articles = () => {
         imageLink: updatedArticle.photo,
         articleID: updatedArticle.articleID, // Include article ID in the body
       };
-  
+
       console.log("Updating article with data:", articleData);
-  
+
       // Send PUT request to update the article
       const response = await fetch("/api/article/edit-article", {
         method: "PUT",
@@ -172,14 +172,16 @@ const Articles = () => {
         },
         body: JSON.stringify(articleData),
       });
-  
+
       if (!response.ok) {
         // Safely handle the error response - check if it's JSON first
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const errorData = await response.json();
           throw new Error(
-            `Failed to update article: ${response.status} - ${JSON.stringify(errorData)}`
+            `Failed to update article: ${response.status} - ${JSON.stringify(
+              errorData
+            )}`
           );
         } else {
           // For non-JSON responses (like HTML error pages)
@@ -189,10 +191,10 @@ const Articles = () => {
           );
         }
       }
-  
+
       // Close the edit modal
       setIsEdit(false);
-      
+
       // Refresh the page to show the updated article
       alert("Article updated successfully");
       location.reload();
@@ -205,15 +207,19 @@ const Articles = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-700 via-white to-white">
       <Navbar />
-      <div className="p-[4vw] grid grid-cols-4 gap-y-[2vw]">
+      <div className="px-4 py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {isLoading ? (
-          <div className="col-span-4 text-center py-8">Loading articles...</div>
+          <div className="col-span-full text-center py-8">
+            Loading articles...
+          </div>
         ) : error ? (
-          <div className="col-span-4 text-center text-red-500 py-8">
+          <div className="col-span-full text-center text-red-500 py-8">
             {error}
           </div>
         ) : articles.length === 0 ? (
-          <div className="col-span-4 text-center py-8">No articles found.</div>
+          <div className="col-span-full text-center py-8">
+            No articles found.
+          </div>
         ) : (
           articles.map((article, index) => (
             <ArticleCard
@@ -228,9 +234,9 @@ const Articles = () => {
         {isLoggedIn && (
           <button
             onClick={() => setIsClick(true)}
-            className="w-[4.583vw] h-[4.583vw] rounded-full font-bold bg-[#1A929A] hover:bg-[#166E74] active:bg-[#124D53] transition flex items-center justify-center fixed bottom-8 right-8 hover:rotate-[-180deg] hover:transition hover:ease-in hover:duration-300 hover:cursor-pointer"
+            className="w-12 h-12 md:w-[4.583vw] md:h-[4.583vw] rounded-full font-bold bg-[#1A929A] hover:bg-[#166E74] active:bg-[#124D53] transition flex items-center justify-center fixed bottom-6 right-6 md:bottom-8 md:right-8 hover:rotate-[-180deg] hover:transition hover:ease-in hover:duration-300 hover:cursor-pointer"
           >
-            <FaPlus className="text-[3vw]" />
+            <FaPlus className="text-xl md:text-[3vw]" />
           </button>
         )}
 
@@ -248,7 +254,7 @@ const Articles = () => {
             onSubmit={submitEditArticle}
             inputOptions={"Edit"}
             article={editingArticle}
-          ></InputArticle>
+          />
         )}
       </div>
     </div>
